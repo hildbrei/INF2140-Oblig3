@@ -1,8 +1,7 @@
 package channel;
 
-public class Receiver implements Runnable {
+public class Receiver extends Process implements Runnable {
 
-	private String name;
 	private Select receiver_select;
 	private int send;
 	private int receive;
@@ -13,8 +12,7 @@ public class Receiver implements Runnable {
 	UnreliableChannel k;
 
 	public Receiver(String string, Select reciever_select, UnreliableChannel l, UnreliableChannel k) {
-
-		name = string;
+		super(string);
 		this.receiver_select = reciever_select;
 		send = 0;
 		receive = 1;

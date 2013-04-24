@@ -1,8 +1,7 @@
 package channel;
 
-public class Sender implements Runnable {
+public class Sender extends Process implements Runnable {
 
-	private String name;
 	private Select sender_select;
 	private UnreliableChannel l;
 	private UnreliableChannel k;
@@ -14,9 +13,9 @@ public class Sender implements Runnable {
 
 
 	public Sender(String string, Select sender_select, int val, int b, UnreliableChannel l, UnreliableChannel k) {
+		super(string);
 		this.l = l;
 		this.k = k;
-		name = string;
 		this.sender_select = sender_select;
 		send = 0;
 		receive = 1;

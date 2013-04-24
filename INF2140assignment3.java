@@ -3,27 +3,31 @@ package channel;
 public class INF2140assignment3 {
 
 	public static void main(String[] args) throws InterruptedException {
-
+		
 		Select sender_select = new Select();
 		Select receiver_select = new Select();
 
 		Selectable a = new Selectable();
-		sender_select.add(0, a);
-		Selectable b = new Selectable();
-		receiver_select.add(1, b);
 		Selectable c = new Selectable();
-		receiver_select.add(0, c);
+		Selectable b = new Selectable();
 		Selectable d = new Selectable();
-		sender_select.add(1, d);
+		
 
 		UnreliableChannel k = new UnreliableChannel("K", a, b);
 		UnreliableChannel l = new UnreliableChannel("L", c, d);
 		
 		Sender sender = new Sender("S", sender_select, 0, 0, l, k);
-		Receiver reciever = new Receiver("R", receiver_select, l, k);
+		sender_select.setProcess(sender);
+		Receiver receiver = new Receiver("R", receiver_select, l, k);
+		receiver_select.setProcess(receiver);
+		
+		sender_select.add(0, a);
+		receiver_select.add(0, c);
+		receiver_select.add(1, b);
+		sender_select.add(1, d);
 
 		Thread s_thread = new Thread(sender);
-		Thread r_thread = new Thread(reciever);
+		Thread r_thread = new Thread(receiver);
 		Thread k_thread = new Thread(k);
 		Thread l_thread = new Thread(l);
 		

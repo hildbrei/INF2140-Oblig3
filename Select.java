@@ -12,10 +12,16 @@ class Select {
 	 * for a new choice by updating their internal and external guards.
 	 */
 	private ArrayList<Selectable> list = new ArrayList<Selectable>(2);
+	
+	Process pros;//enten Reciever eller Sender; 
+				//de er subklasser av Process for at vi ikke skal lagre 
+	 			//unødvendige verdier med nullverdi i denne klassen. 
 
 	public synchronized void add(int i, Selectable s) {
 		list.add(i, s);
 		s.setSelect(this);
+		System.out.println(pros.getName() + 
+				" has one more Selectable object in its Select. Size of list: " + list.size());
 	}
 
 	/*
@@ -65,6 +71,10 @@ class Select {
 			} // No choice is enabled
 		}
 		return readyIndex;
+	}
+	
+	public void setProcess(Process p){
+		pros = p;
 	}
 }
 

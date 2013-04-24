@@ -11,7 +11,7 @@ public class SyncChannel<T> implements Channel<T> {
 		send_sel = s; 
 		rec_sel=r;
 		send_sel.updateInternal(true);
-		rec_sel.updateInternal(false);
+		rec_sel.updateInternal(true);
 	}
 
 	public synchronized boolean isEmpty(){

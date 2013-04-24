@@ -7,26 +7,26 @@ public class Sender extends Process implements Runnable {
 	private UnreliableChannel k;
 	private int send;
 	private int receive;
-	private int value;
+	private int number;
 	private int bit;
-	private String data;
+	private int choice;
 
 
-	public Sender(String string, Select sender_select, int val, int b, UnreliableChannel l, UnreliableChannel k) {
+	public Sender(String string, Select sender_select, int nr, int b, UnreliableChannel l, UnreliableChannel k) {
 		super(string);
 		this.l = l;
 		this.k = k;
 		this.sender_select = sender_select;
 		send = 0;
 		receive = 1;
-		value = val;
+		number = nr;
+		System.out.println("in_msg.data: " + number);
 		bit = b;
 	}
 
 
 	public void run() {
 		while(true){
-			int choice = -1;
 			try {
 				choice = sender_select.choose();
 			} catch (InterruptedException e) {
@@ -35,21 +35,39 @@ public class Sender extends Process implements Runnable {
 			if(choice == send){
 				//send data(value and bit together in a String)
 				System.out.println("in choice <send> Sender");
+				//we must update the guards for sender_select.list.index(send)
 				try {
-					k.send(data);
+					sendData();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+
 			}
 			else if(choice == receive){
-				//recieve data (value and bit together in a String)
+				//receive bit (bit as a String)
 				System.out.println("in choice <recieve> Sender");
+				//we must update the guards for sender_select.list.index(receive)
 				try {
-					String bit = (String) l.receive();
+					int bitReceived = receiveBit();
+					if(bitReceived == bit){
+						System.out.println("out_ack: " + bit);
+						bit = (bit+1)%2;
+						number = (number+1)%3;
+						System.out.println("in_msg.data: " + number);
+					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+	}
+
+	private void sendData() throws InterruptedException{
+		k.send(number + "," + bit);
+	}
+	
+	private int receiveBit() throws InterruptedException{
+		String b = (String) l.receive();
+		return Integer.parseInt(b);
 	}
 }

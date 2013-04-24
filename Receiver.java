@@ -7,7 +7,7 @@ public class Receiver extends Process implements Runnable {
 	private int receive;
 	private String data;
 	private int bit;
-	private int value;
+	private int number;
 	UnreliableChannel l;
 	UnreliableChannel k;
 
@@ -31,8 +31,9 @@ public class Receiver extends Process implements Runnable {
 			if(choice == send){
 				//send data and bit
 				System.out.println("in choice <send> Reciever");
+				//we need to update the guard to receiver_select.list.index(send)
 				try {
-					l.send(bit);
+					sendBit();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -40,12 +41,28 @@ public class Receiver extends Process implements Runnable {
 			else if(choice == receive){
 				//receive data and bit
 				System.out.println("in choice <recieve> Reciever");
+				//we need to update the guard to receiver_select.list.index(receiver)
 				try {
-					data = (String) k.receive();
+					receiveData();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	private void sendBit() throws InterruptedException{
+		l.send(bit);
+	}
+	
+	private void receiveData() throws InterruptedException{
+		data = (String) k.receive();
+		int nr = Integer.parseInt(data.substring(0,1));
+		int b = Integer.parseInt(data.substring(2,3));
+		if(bit != b){
+			number = nr;
+			System.out.println("out_msg.data: " + number);
+			bit = b;
 		}
 	}
 }

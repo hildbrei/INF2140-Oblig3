@@ -4,7 +4,7 @@ import java.util.Random;
 public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 	final static int maxError = 5; // The channel cannot lose or duplicate more than maxError times continuously
 	private T val=null;
-	private int bit = 0;
+	private int bit;
 	private SyncChannel<T> ch1, ch2;
 	private int numberOfRepetitionAndLost = 0;
 
@@ -21,10 +21,11 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 	/*
 	 * After sending, notify run-method
 	 */
-	public synchronized void send(T v, int bit) throws InterruptedException {
-		ch1.send(v, bit);
+	public synchronized void send(T v) throws InterruptedException {
+		ch1.send(v);
 		notifyAll();
 	}
+	
 
 	/*
 	 * After receiving, notify run-method
@@ -39,7 +40,7 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 	 * Internal methods used by run-method
 	 */
 	private synchronized void int_send(T v) throws InterruptedException { 
-		ch2.send(v, bit); 
+		ch2.send(v); 
 	}
 	private synchronized T int_receive() throws InterruptedException { 
 		return ch1.receive(); 
@@ -63,7 +64,6 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 						numberOfRepetitionAndLost= maxError; //now, you will not continue in while-loop
 						break;
 					case 1: // Lose the message, i.e, the message is not delivered
-						//numberOfRepetitionAndLost= maxError;
 						numberOfRepetitionAndLost++;
 						break;
 					case 2: // Duplicate the message

@@ -2,7 +2,7 @@ package channel;
 
 public class SyncChannel<T> implements Channel<T> { 
 	private T val=null;
-	private int bit = 0;
+	private int bit;
 	private String name;
 	private Selectable send_sel;
 	private Selectable rec_sel;
@@ -19,9 +19,8 @@ public class SyncChannel<T> implements Channel<T> {
 		return (val==null);
 	}
 
-	public synchronized void send(T v, int b) throws InterruptedException {
+	public synchronized void send(T v) throws InterruptedException {
 		val = v;
-		bit = b;
 		System.out.println(name+" contains: "+ val+"\n");
 		send_sel.updateInternal(isEmpty());
 		rec_sel.updateInternal(!isEmpty());

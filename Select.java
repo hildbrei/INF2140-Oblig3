@@ -13,8 +13,8 @@ class Select {
 	 */
 	private ArrayList<Selectable> list = new ArrayList<Selectable>(2);
 
-	public synchronized void add(Selectable s) {
-		list.add(s);
+	public synchronized void add(int i, Selectable s) {
+		list.add(i, s);
 		s.setSelect(this);
 	}
 

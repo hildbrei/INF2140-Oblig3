@@ -14,7 +14,7 @@ class Selectable {
 	private Select mySelector;
 
 	public synchronized void setSelect(Select s){ 
-		System.out.println("Setting the selector selector");  
+		System.out.println("Setting the selector");  
 		mySelector = s;
 	}
 

@@ -6,14 +6,17 @@ public class Sender implements Runnable {
 	private Select sender_select;
 	private int send;
 	private int recieve;
+	private int value;
+	private int bit;
 
 
-	public Sender(String string, Select sender_select) {
+	public Sender(String string, Select sender_select, int val, int b) {
 		name = string;
 		this.sender_select = sender_select;
 		send = 0;
 		recieve = 1;
-
+		value = val;
+		bit = b;
 	}
 
 
@@ -27,9 +30,13 @@ public class Sender implements Runnable {
 			}
 			if(choice == send){
 				//send data and bit
+				System.out.println("in choice <send> Sender");
+				break;
 			}
 			else if(choice == recieve){
 				//recieve data and bit
+				System.out.println("in choice <recieve> Sender");
+				break;
 			}
 		}
 	}

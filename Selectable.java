@@ -7,10 +7,10 @@ class Selectable {
 	 * are satisfied. The conditions can only be tested if they are up to date,
 	 * which is expressed by the boolean ready-variables.
 	 */
-	private boolean extGuard=false;
-	private boolean intGuard=false;
-	private boolean intReady=false;
-	private boolean extReady=false;
+	private boolean extGuard=true;
+	private boolean intGuard=true;
+	private boolean intReady=true;
+	private boolean extReady=true;
 	private Select mySelector;
 
 	public synchronized void setSelect(Select s){ 

@@ -20,8 +20,6 @@ class Select {
 	public synchronized void add(int i, Selectable s) {
 		list.add(i, s);
 		s.setSelect(this);
-		System.out.println(pros.getName() + 
-				" has one more Selectable object in its Select. Size of list: " + list.size());
 	}
 
 	/*
@@ -43,15 +41,18 @@ class Select {
 	 * Test Selectable objects, return one which is enabled
 	 */
 	private synchronized int testAll() throws InterruptedException  {
-		int i = 1;
+		int i = 0;
 		for (Selectable s:list){
+			System.out.println(i);
 			if (s.testGuard()) { 
+				System.out.println("testing guard " + pros.getName());
 				s.clearReady(); 
+				System.out.println("returning " + i + " in testAll() " + pros.getName());
 				return i; 
 			}
-			++i;
+			i++;
 		}
-		return 0;
+		return -1;
 	}
 
 	/*
@@ -60,13 +61,15 @@ class Select {
 	 * (b) no Selectable object is enabled
 	 */
 	public synchronized int choose() throws InterruptedException {
-		int readyIndex = 0;
-		while (readyIndex==0) {
+		int readyIndex = -1;
+		while (readyIndex==-1) {
 			if (!readyAll()){ 
+				System.out.println("! all selectables are ready " + pros.getName());
 				wait(); 
 			}  // Not ready to make a choice
 			readyIndex=testAll();
-			if (readyIndex==0) { 
+			System.out.println("testingAll " + pros.getName());
+			if (readyIndex==-1) { 
 				wait(); 
 			} // No choice is enabled
 		}

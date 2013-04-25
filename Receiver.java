@@ -14,8 +14,8 @@ public class Receiver extends Process implements Runnable {
 	public Receiver(String string, Select reciever_select, UnreliableChannel l, UnreliableChannel k) {
 		super(string);
 		this.receiver_select = reciever_select;
-		send = 0;
-		receive = 1;
+		send = 1;
+		receive = 0;
 		this.l = l;
 		this.k = k;
 	}
@@ -24,6 +24,7 @@ public class Receiver extends Process implements Runnable {
 		while(true){
 			int choice = -1;
 			try {
+				System.out.println("receiver is choosing..");
 				choice = receiver_select.choose();	
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -65,12 +66,8 @@ public class Receiver extends Process implements Runnable {
 	
 	private void receiveData() throws InterruptedException{
 		data = (String) k.receive();
-		String[] dataArr = new String[] {data};
-		for(String s: dataArr){
-			System.out.println(s);
-		}
-		int nr = Integer.parseInt(dataArr[0]);
-		int b = Integer.parseInt(dataArr[2]);
+		int nr = (int)data.charAt(0);
+		int b = (int)data.charAt(2);
 		if(bit != b){
 			number = nr;
 			System.out.println("out_msg.data: " + number);
@@ -81,7 +78,7 @@ public class Receiver extends Process implements Runnable {
 	public void setStartState() {
 		Selectable s = receiver_select.getList().get(send);
 		Selectable r = receiver_select.getList().get(send);
-		s.updateExternal(false);
+		s.updateExternal(true);
 		r.updateExternal(true);
 	}
 }

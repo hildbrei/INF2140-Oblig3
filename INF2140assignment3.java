@@ -23,20 +23,20 @@ public class INF2140assignment3 {
 		
 		sender_select.add(0, a);
 		receiver_select.add(0, c);
-		receiver_select.add(1, b);
+		receiver_select.add(1, b);		
 		sender_select.add(1, d);
 		
 		sender.setStartState();//first time send should happen, not receive
 		receiver.setStartState();//first time receive should happen, not send
 
 		Thread s_thread = new Thread(sender);
-		Thread r_thread = new Thread(receiver);
 		Thread k_thread = new Thread(k);
+		Thread r_thread = new Thread(receiver);
 		Thread l_thread = new Thread(l);
 		
 		s_thread.start();
-		r_thread.start();
 		k_thread.start();
+		r_thread.start();
 		l_thread.start();
 	}
 }

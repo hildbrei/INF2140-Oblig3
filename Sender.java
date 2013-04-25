@@ -32,11 +32,16 @@ public class Sender extends Process implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 			if(choice == send){
 				//send data(value and bit together in a String)
 				System.out.println("in choice <send> Sender");
 				//we must update the guards for sender_select.list.index(send)
 				try {
+					Selectable s = sender_select.getList().get(send);
+					s.updateExternal(true);
+					Selectable r = sender_select.getList().get(receive);
+					r.updateExternal(false);
 					sendData();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -48,6 +53,10 @@ public class Sender extends Process implements Runnable {
 				System.out.println("in choice <recieve> Sender");
 				//we must update the guards for sender_select.list.index(receive)
 				try {
+					Selectable s = sender_select.getList().get(send);
+					s.updateExternal(false);
+					Selectable r = sender_select.getList().get(receive);
+					r.updateExternal(true);
 					int bitReceived = receiveBit();
 					if(bitReceived == bit){
 						System.out.println("out_ack: " + bit);
@@ -69,5 +78,13 @@ public class Sender extends Process implements Runnable {
 	private int receiveBit() throws InterruptedException{
 		String b = (String) l.receive();
 		return Integer.parseInt(b);
+	}
+
+
+	public void setStartState() {
+		Selectable s = sender_select.getList().get(send);
+		Selectable r = sender_select.getList().get(send);
+		s.updateExternal(true);
+		r.updateExternal(true);
 	}
 }

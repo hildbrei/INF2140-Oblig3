@@ -18,6 +18,7 @@ public class Receiver extends Process implements Runnable {
 		receive = 0;
 		this.l = l;
 		this.k = k;
+		bit = 1;
 	}
 
 	public void run() {
@@ -46,7 +47,7 @@ public class Receiver extends Process implements Runnable {
 			else if(choice == receive){
 				//receive data and bit
 				System.out.println("in choice <recieve> Reciever");
-				//we need to update the guard to receiver_select.list.index(receiver)
+				//we need to update the right guard to receiver_select.list.index(receiver)
 				try {
 					Selectable s = receiver_select.getList().get(send);
 					s.updateExternal(false);
@@ -66,8 +67,10 @@ public class Receiver extends Process implements Runnable {
 	
 	private void receiveData() throws InterruptedException{
 		data = (String) k.receive();
-		int nr = (int)data.charAt(0);
-		int b = (int)data.charAt(2);
+		System.out.println(data + " is received at " + getName());
+		int nr = (int)(data.charAt(0)-48);
+		int b = (int)(data.charAt(2) - 48);
+		
 		if(bit != b){
 			number = nr;
 			System.out.println("out_msg.data: " + number);

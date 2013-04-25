@@ -45,9 +45,7 @@ class Select {
 		for (Selectable s:list){
 			System.out.println(i);
 			if (s.testGuard()) { 
-				System.out.println("testing guard " + pros.getName());
 				s.clearReady(); 
-				System.out.println("returning " + i + " in testAll() " + pros.getName());
 				return i; 
 			}
 			i++;
@@ -64,11 +62,9 @@ class Select {
 		int readyIndex = -1;
 		while (readyIndex==-1) {
 			if (!readyAll()){ 
-				System.out.println("! all selectables are ready " + pros.getName());
 				wait(); 
 			}  // Not ready to make a choice
 			readyIndex=testAll();
-			System.out.println("testingAll " + pros.getName());
 			if (readyIndex==-1) { 
 				wait(); 
 			} // No choice is enabled

@@ -10,6 +10,7 @@ public class Sender extends Process implements Runnable {
 	private int number;
 	private int bit;
 	private int choice;
+	private boolean ack;
 
 
 	public Sender(String string, Select sender_select, int nr, int b, UnreliableChannel l, UnreliableChannel k) {
@@ -22,6 +23,7 @@ public class Sender extends Process implements Runnable {
 		number = nr;
 		System.out.println("in_msg.data: " + number);
 		bit = b;
+		ack = false;
 	}
 
 
@@ -38,11 +40,11 @@ public class Sender extends Process implements Runnable {
 				System.out.println("in choice <send> Sender");
 				//we must update the guards for sender_select.list.index(send)
 				try {
-					Selectable s = sender_select.getList().get(send);
-					s.updateExternal(true);
-					Selectable r = sender_select.getList().get(receive);
-					r.updateExternal(false);
 					sendData();
+					Selectable s = sender_select.getList().get(send);
+					s.updateExternal(k.isEmpty());
+					Selectable r = sender_select.getList().get(receive);
+					r.updateExternal(!k.isEmpty());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -53,11 +55,11 @@ public class Sender extends Process implements Runnable {
 				System.out.println("in choice <recieve> Sender");
 				//we must update the guards for sender_select.list.index(receive)
 				try {
-					Selectable s = sender_select.getList().get(send);
-					s.updateExternal(false);
-					Selectable r = sender_select.getList().get(receive);
-					r.updateExternal(true);
 					int bitReceived = receiveBit();
+					Selectable s = sender_select.getList().get(send);
+					s.updateExternal(l.isEmpty());
+					Selectable r = sender_select.getList().get(receive);
+					r.updateExternal(!l.isEmpty());
 					if(bitReceived == bit){
 						System.out.println("out_ack: " + bit);
 						bit = (bit+1)%2;

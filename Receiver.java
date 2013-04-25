@@ -25,7 +25,6 @@ public class Receiver extends Process implements Runnable {
 		while(true){
 			int choice = -1;
 			try {
-				System.out.println("receiver is choosing..");
 				choice = receiver_select.choose();	
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -36,9 +35,9 @@ public class Receiver extends Process implements Runnable {
 				//we need to update the guard to receiver_select.list.index(send)
 				try {
 					Selectable s = receiver_select.getList().get(send);
-					s.updateExternal(true);
+					s.updateExternal(l.isEmpty());
 					Selectable r = receiver_select.getList().get(receive);
-					r.updateExternal(false);
+					r.updateExternal(!l.isEmpty());
 					sendBit();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -50,9 +49,9 @@ public class Receiver extends Process implements Runnable {
 				//we need to update the right guard to receiver_select.list.index(receiver)
 				try {
 					Selectable s = receiver_select.getList().get(send);
-					s.updateExternal(false);
+					s.updateExternal(k.isEmpty());
 					Selectable r = receiver_select.getList().get(receive);
-					r.updateExternal(true);
+					r.updateExternal(!k.isEmpty());
 					receiveData();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -65,7 +64,7 @@ public class Receiver extends Process implements Runnable {
 		l.send(bit);
 	}
 	
-	private void receiveData() throws InterruptedException{
+	private synchronized void receiveData() throws InterruptedException{
 		data = (String) k.receive();
 		System.out.println(data + " is received at " + getName());
 		int nr = (int)(data.charAt(0)-48);
@@ -74,7 +73,7 @@ public class Receiver extends Process implements Runnable {
 		if(bit != b){
 			number = nr;
 			System.out.println("out_msg.data: " + number);
-			bit = b;
+			bit = b;	
 		}
 	}
 

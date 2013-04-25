@@ -43,7 +43,6 @@ class Select {
 	private synchronized int testAll() throws InterruptedException  {
 		int i = 0;
 		for (Selectable s:list){
-			System.out.println(i);
 			if (s.testGuard()) { 
 				s.clearReady(); 
 				return i; 

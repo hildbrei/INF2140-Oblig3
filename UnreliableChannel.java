@@ -54,6 +54,7 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 					wait(); 
 				} // Wait for something to do
 				val=int_receive();
+				notifyAll();//because a thread may wait for val to have a value to receive this value
 				while (numberOfRepetitionAndLost < maxError){
 					Random random = new Random();
 					int randomInt = random.nextInt(3);	// randomInt gets the values 0, 1 and 2 which 
@@ -79,6 +80,10 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 				numberOfRepetitionAndLost = 0; // reset for next message
 			}
 		} catch (Exception e){}
+	}
+	
+	public synchronized boolean isEmpty(){
+		return (val == null);
 	}
 }
 

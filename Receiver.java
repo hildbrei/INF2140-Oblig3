@@ -64,7 +64,7 @@ public class Receiver extends Process implements Runnable {
 		l.send(bit);
 	}
 	
-	private synchronized void receiveData() throws InterruptedException{
+	private void receiveData() throws InterruptedException{
 		data = (String) k.receive();
 		System.out.println(data + " is received at " + getName());
 		int nr = (int)(data.charAt(0)-48);

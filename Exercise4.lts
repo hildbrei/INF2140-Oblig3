@@ -41,20 +41,12 @@ CHECK[b:BIT][bb:BIT][e:M][i:S] =
 	| when(bb == b)
 		c.[i].[b] -> RECIEVER[b]).
 
-||ABP = (U_CHAN||SENDER||RECIEVER).//>>{c.[b:BIT]}.
+||ABP = (U_CHAN||SENDER||RECIEVER)>>{c.[b:BIT]}.
 
-Send_1 = Send_1[1][0],
-Send_1[i:S][e:M] = ([i].input.[e] -> [i].in_msg.[e] -> [i].out_ack -> Send_1[i][(e+1)%3]).
+Send = Send[0],
+Send[e:M] = (input.[e] -> in_msg.[e] -> out_ack -> Send[(e+1)%2]).
 
-Send_2 = Send_2[2][0],
-Send_2[i:S][e:M] = ([i].input.[e] -> [i].in_msg.[e] -> [i].out_ack -> Send_2[i][(e+1)%3]).
+Rec = (out_msg.[e:M] -> output.[e] -> in_ack[b:BIT] -> Rec).
 
-Rec_1 = Rec_1[1],
-Rec_1[i:S] = ([i].out_msg.[e:M] -> [i].output.[e] -> [i].in_ack[b:BIT] -> Rec_1[i]).
-
-Rec_2 = Rec_2[2],
-Rec_2[i:S] = ([i].out_msg.[e:M] -> [i].output.[e] -> [i].in_ack[b:BIT] -> Rec_2[i]).
-
-
-||ABP_2 = (ABP || Send_1 || Send_2 || Rec_1 || Rec_2).
+||ABP_2 = (ABP || [i:S]:Send || [i:S]:Rec).
 

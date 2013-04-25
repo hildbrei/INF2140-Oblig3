@@ -1,0 +1,48 @@
+const MAX = 3
+range ERR = 0..MAX
+range M = 0..2
+range BIT = 0..1
+
+U_CHAN_K = U_CHAN_K[0],
+U_CHAN_K[err:ERR] = (a.bit.data[b:BIT][e:M] -> b.bit.data[b][e] -> U_CHAN_K[0]
+	| when(err<MAX) a.bit.data[b:BIT][e:M] -> data_loss ->U_CHAN_K[err+1]
+	| when(err<MAX) a.bit.data[b:BIT][e:M] -> DUPLICATE[err][b][e]),
+
+DUPLICATE[err:ERR][b:BIT][e:M] = (when(err<MAX) b.bit.data[b][e] -> DUPLICATE[err+1][b][e]
+	| b.bit.data[b][e] -> U_CHAN_K[err]).
+	
+U_CHAN_L = U_CHAN_L[0],
+U_CHAN_L[err:ERR] = (c.bit[b:BIT] -> d.bit[b] -> U_CHAN_L[0]
+	| when(err<MAX) c.bit[b:BIT] -> ack_loss -> U_CHAN_L[err+1]
+	| when(err<MAX) c.bit[b:BIT] -> DUPLICATE[err][b]),
+	
+DUPLICATE[err:ERR][b:BIT] = (when(err<MAX) d.bit[b] -> DUPLICATE[err+1][b]
+	|d.bit[b] -> U_CHAN_L[err]). 
+
+	
+||U_CHAN = (U_CHAN_K||U_CHAN_L).
+
+SENDER = SENDER[0],
+SENDER[b:BIT] = (in_msg_data[e:M] -> SEND[b][e]),
+SEND[b:BIT][e:M] = (a.bit.data[b][e] -> SEND[b][e] 
+					| d.bit[db:BIT] -> CHECK[db][b][e]),
+CHECK[db:BIT][b:BIT][e:M] = 
+				(when(db == b)
+					out_ack -> SENDER[(b+1)%2]
+				|when(db != b)
+					resend_S -> SEND[b][e]).
+
+RECIEVER = RECIEVER[1],
+RECIEVER[b:BIT] = (b.bit.data[bb:BIT][e:M] -> CHECK[b][bb][e]),
+CHECK[b:BIT][bb:BIT][e:M] = 
+	(when(bb != b)
+		out_msg.data[e] -> in_ack[bb] -> c.bit[bb] -> RECIEVER[bb]
+	| when(bb == b)
+		c.bit[b] -> RECIEVER[b]).
+
+||ABP = (U_CHAN||SENDER||RECIEVER)>>{c.bit[b:BIT]}.
+
+/*S1 = Send[1][0],
+S2 = Send[2][2],
+Send[i:1..2][e:M] = ([i].input.data[e] -> [i].in_msg.data[e] -> [i].out_ack -> Send[i][(e+1)%3]).*/
+

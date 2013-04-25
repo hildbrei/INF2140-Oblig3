@@ -76,6 +76,10 @@ class Select {
 	public void setProcess(Process p){
 		pros = p;
 	}
+	
+	public ArrayList<Selectable> getList(){
+		return list;
+	}
 }
 
 

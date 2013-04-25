@@ -3,50 +3,58 @@ range ERR = 0..MAX
 range M = 0..2
 range BIT = 0..1
 range S = 1..2
+set Alpha = {a.[i:S].[b:BIT].[e:M], b.[i:S].[b:BIT].[e:M], c.[i:S].[b:BIT], d.[i:S].[b:BIT]}
 
 U_CHAN_K = U_CHAN_K[0],
 U_CHAN_K[err:ERR] = (a.[i:S].[b:BIT].[e:M] -> b.[i].[b].[e] -> U_CHAN_K[0]
 	| when(err<MAX) a.[i:S].[b:BIT].[e:M] -> data_loss ->U_CHAN_K[err+1]
-	| when(err<MAX) a.[i:S].[b:BIT].[e:M] -> DUPLICATE[err][b][e][i]),
+	| when(err<MAX) a.[i:S].[b:BIT].[e:M] -> DUPLICATE[err][b][e]),
 
-DUPLICATE[err:ERR][b:BIT][e:M][i:S] = (when(err<MAX) b.[i].[b].[e] -> DUPLICATE[err+1][b][e][i]
-	| b.[i].[b].[e] -> U_CHAN_K[err]).
+DUPLICATE[err:ERR][b:BIT][e:M] = (when(err<MAX) b.[i:S].[b].[e] -> DUPLICATE[err+1][b][e]
+	| b.[i:S].[b].[e] -> U_CHAN_K[err]).
 	
 U_CHAN_L = U_CHAN_L[0],
 U_CHAN_L[err:ERR] = (c.[i:S].[b:BIT] -> d.[i].[b] -> U_CHAN_L[0]
 	| when(err<MAX) c.[i:S].[b:BIT] -> ack_loss -> U_CHAN_L[err+1]
-	| when(err<MAX) c.[i:S].[b:BIT] -> DUPLICATE[err][b][i]),
+	| when(err<MAX) c.[i:S].[b:BIT] -> DUPLICATE[err][b]),
 	
-DUPLICATE[err:ERR][b:BIT][i:S] = (when(err<MAX) d.[i].[b] -> DUPLICATE[err+1][b][i]
-	|d.[i].[b] -> U_CHAN_L[err]). 
+DUPLICATE[err:ERR][b:BIT] = (when(err<MAX) d.[i:S].[b] -> DUPLICATE[err+1][b]
+	|d.[i:S].[b] -> U_CHAN_L[err]). 
 
 	
 ||U_CHAN = (U_CHAN_K||U_CHAN_L).
 
 SENDER = SENDER[0],
-SENDER[b:BIT] = ([i:S].in_msg.[e:M] -> SEND[b][e][i]),
-SEND[b:BIT][e:M][i:S] = (a.[i].[b].[e] -> SEND[b][e][i] 
-					| d.[i].[db:BIT] -> CHECK[db][b][e][i]),
-CHECK[db:BIT][b:BIT][e:M][i:S] = 
+SENDER[b:BIT] = ([i:S].in_msg.[e:M] -> SEND[b][e]),
+SEND[b:BIT][e:M] = (a.[i:S].[b].[e] -> SEND[b][e] 
+					| d.[i:S].[db:BIT] -> CHECK[db][b][e]),
+CHECK[db:BIT][b:BIT][e:M] = 
 				(when(db == b)
-					[i].out_ack -> SENDER[(b+1)%2]
+					[i:S].out_ack -> SENDER[(b+1)%2]
 				|when(db != b)
-					resend_S -> SEND[b][e][i]).
+					resend_S -> SEND[b][e]).
 
 RECIEVER = RECIEVER[1],
-RECIEVER[b:BIT] = (b.[i:S].[bb:BIT].[e:M] -> CHECK[b][bb][e][i]),
-CHECK[b:BIT][bb:BIT][e:M][i:S] = 
+RECIEVER[b:BIT] = (b.[i:S].[bb:BIT].[e:M] -> CHECK[b][bb][e]),
+CHECK[b:BIT][bb:BIT][e:M] = 
 	(when(bb != b)
-		[i].out_msg.[e] -> [i].in_ack[bb] -> c.[i].[bb] -> RECIEVER[bb]
+		[i:S].out_msg.[e] -> [i].in_ack[bb] -> c.[i].[bb] -> RECIEVER[bb]
 	| when(bb == b)
-		c.[i].[b] -> RECIEVER[b]).
+		c.[i:S].[b] -> RECIEVER[b]).
 
 ||ABP = (U_CHAN||SENDER||RECIEVER).//>>{c.[b:BIT]}.
 
-Send = Send[0],
-Send[e:M] = (input.[e] -> in_msg.[e] -> out_ack -> Send[(e+1)%2]).
+Send_1 = Send_1[0][1],
+Send_1[e:M][i:S] = ([i].input.[e] -> [i].in_msg.[e] -> [i].out_ack -> Send_1[(e+1)%2][i]).
 
-Rec = (out_msg.[e:M] -> output.[e] -> in_ack[b:BIT] -> Rec).
+Send_2 = Send_2[0][2],
+Send_2[e:M][i:S] = ([i].input.[e] -> [i].in_msg.[e] -> [i].out_ack -> Send_2[(e+1)%2][i]).
 
-||ABP_2 = ([i:S]::ABP || [i:S]:Send || [i:S]:Rec).
+Rec_1 = Rec_1[1],
+Rec_1[i:S] = ([i].out_msg.[e:M] -> [i].output.[e] -> [i].in_ack[b:BIT] -> Rec_1[i]).
+
+Rec_2 = Rec_2[2],
+Rec_2[i:S] = ([i].out_msg.[e:M] -> [i].output.[e] -> [i].in_ack[b:BIT] -> Rec_2[i]).
+
+||ABP_2 = ([i:S]::ABP || Send_1 || Send_2 || Rec_1 || Rec_2).
 

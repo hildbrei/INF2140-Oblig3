@@ -30,7 +30,7 @@ class Selectable {
 
 	public synchronized boolean testGuard() {
 		
-		System.out.println(extGuard + " " + intGuard + " " + intReady + " " + extReady + mySelector.pros.getName());
+		//System.out.println(extGuard + " " + intGuard + " " + intReady + " " + extReady + mySelector.pros.getName());
 		
 		return(extGuard && intGuard);
 	}

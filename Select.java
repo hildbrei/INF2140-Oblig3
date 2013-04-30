@@ -54,10 +54,10 @@ class Select {
 	private synchronized int testAll() throws InterruptedException  {
 		int i = 0;
 		for (Selectable s:list){
-			System.out.println("testAll " + i + " " + pros.getName());
+			//System.out.println("testAll " + i + " " + pros.getName());
 			if (s.testGuard()) { 
 				s.clearReady(); 
-				System.out.println("testAll in if " + i + " " + pros.getName());
+				//System.out.println("testAll in if " + i + " " + pros.getName());
 				return i; 
 			}
 			i++;

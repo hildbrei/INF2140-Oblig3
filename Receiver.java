@@ -12,6 +12,7 @@ public class Receiver extends Process implements Runnable {
 	UnreliableChannel<String> k;
 	private Selectable b;
 	private Selectable c;
+	private boolean ack;//to check when to send from receiver
 	
 
 	public Receiver(String string, Select reciever_select, UnreliableChannel<String> l, UnreliableChannel<String> k, Selectable b, Selectable c) {
@@ -20,12 +21,12 @@ public class Receiver extends Process implements Runnable {
 		
 		super(string);
 		this.receiver_select = reciever_select;
-		send = 1;
-		receive = 0;
+		send = 0;
+		receive = 1;
 		this.l = l;
 		this.k = k;
 		bit = 1;
-		
+		ack = false;
 		this.b = b;
 		this.c = c;
 	}
@@ -33,8 +34,6 @@ public class Receiver extends Process implements Runnable {
 	
 	
 	public void run() {
-		
-		
 		
 		while(true){
 			int choice = -1;
@@ -50,7 +49,7 @@ public class Receiver extends Process implements Runnable {
 				try {
 					sendBit();
 					b.updateExternal(true);
-					c.updateExternal(true);
+					c.updateExternal(false);
 					
 					Thread.sleep(1000);
 					
@@ -58,7 +57,7 @@ public class Receiver extends Process implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			else if(choice == receive){
+			if(choice == receive){
 				//receive data and bit
 				System.out.println("in choice <recieve> Reciever");
 				//we need to update the right guard to receiver_select.list.index(receiver)
@@ -67,7 +66,6 @@ public class Receiver extends Process implements Runnable {
 					receiveData();
 					b.updateExternal(true);
 					c.updateExternal(true);
-					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -80,7 +78,7 @@ public class Receiver extends Process implements Runnable {
 	}
 	
 	private void receiveData() throws InterruptedException{
-		data = (String) k.receive();
+		data = k.receive();
 		if(data == null){
 			System.out.println("blææ R");
 			
@@ -93,6 +91,7 @@ public class Receiver extends Process implements Runnable {
 			number = nr;
 			System.out.println("out_msg.data: " + number);
 			bit = b;	
+			ack = true;
 		}
 	}
 

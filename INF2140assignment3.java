@@ -21,10 +21,10 @@ public class INF2140assignment3 {
 		Receiver receiver = new Receiver("R", receiver_select, l, k, b, c);
 		receiver_select.setProcess(receiver);
 		
-		sender_select.add(0, a);
+		sender_select.add(0, d);
 		receiver_select.add(0, c);
 		receiver_select.add(1, b);		
-		sender_select.add(1, d);
+		sender_select.add(1, a);
 		
 		sender.setStartState();//first time send should happen, not receive
 		receiver.setStartState();//first time receive should happen, not send

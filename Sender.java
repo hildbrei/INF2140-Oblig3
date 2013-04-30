@@ -21,8 +21,8 @@ public class Sender extends Process implements Runnable {
 		this.l = l;
 		this.k = k;
 		this.sender_select = sender_select;
-		send = 0;
-		receive = 1;
+		send = 1;
+		receive = 0;
 		number = nr;
 		System.out.println("in_msg.data: " + number);
 		bit = b;
@@ -65,12 +65,12 @@ public class Sender extends Process implements Runnable {
 					int bitReceived = receiveBit();
 					a.updateExternal(true);
 					d.updateExternal(true);
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				
 					if(bitReceived == bit){
 						System.out.println("out_ack: " + bit);
 						bit = (bit+1)%2;
-						number = (number+1)%3;
+						number = (number+1)%9;
 						System.out.println("in_msg.data: " + number);
 					}
 					Thread.sleep(1000);
@@ -82,7 +82,6 @@ public class Sender extends Process implements Runnable {
 	}
 
 	private void sendData() throws InterruptedException{
-		System.out.println("send data "  );
 		k.send(number + "," + bit);
 	}
 	

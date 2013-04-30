@@ -23,7 +23,7 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 	 */
 	public synchronized void send(T v) throws InterruptedException {
 		ch1.send(v);
-		System.out.println(v + " er mottatt i U ch");
+	//	System.out.println(v + " er mottatt i U ch");
 		notifyAll();
 	}
 	

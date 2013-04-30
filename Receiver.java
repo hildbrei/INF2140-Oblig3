@@ -57,7 +57,7 @@ public class Receiver extends Process implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			if(choice == receive){
+			else if(choice == receive){
 				//receive data and bit
 				System.out.println("in choice <recieve> Reciever");
 				//we need to update the right guard to receiver_select.list.index(receiver)

@@ -12,13 +12,9 @@ public class Receiver extends Process implements Runnable {
 	UnreliableChannel<String> k;
 	private Selectable b;
 	private Selectable c;
-	private boolean ack;//to check when to send from receiver
 	
 
-	public Receiver(String string, Select reciever_select, UnreliableChannel<String> l, UnreliableChannel<String> k, Selectable b, Selectable c) {
-		
-		
-		
+	public Receiver(String string, Select reciever_select, UnreliableChannel<String> l, UnreliableChannel<String> k, Selectable b, Selectable c) {		
 		super(string);
 		this.receiver_select = reciever_select;
 		send = 0;
@@ -26,7 +22,6 @@ public class Receiver extends Process implements Runnable {
 		this.l = l;
 		this.k = k;
 		bit = 1;
-		ack = false;
 		this.b = b;
 		this.c = c;
 	}
@@ -91,7 +86,6 @@ public class Receiver extends Process implements Runnable {
 			number = nr;
 			System.out.println("out_msg.data: " + number);
 			bit = b;	
-			ack = true;
 		}
 	}
 

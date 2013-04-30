@@ -10,24 +10,21 @@ public class Sender extends Process implements Runnable {
 	private int number;//the data to be sent
 	private int bit;//bit to be sent with data (number)
 	private int choice;//the place in ArrayList (Selectable objects)
-	private boolean ack;//if received ack or not
 	private Selectable a;
 	private Selectable d;
-	
+	private boolean isReady;//is telling if the sender is ready to receive a in_msg.data or not
+							//(it may happen that S is occupied with a number from S1 when S2 wants to send in a number)
+	private boolean inProgress;//is telling if the sender has received in_msg.data and not acked yet. (used in S to wait)
 	
 
-	public Sender(String string, Select sender_select, int nr, int b, UnreliableChannel<String> l, UnreliableChannel<String> k, Selectable a, Selectable d) {
+	public Sender(String string, Select sender_select, int b, UnreliableChannel<String> l, UnreliableChannel<String> k, Selectable a, Selectable d) {
 		super(string);
 		this.l = l;
 		this.k = k;
 		this.sender_select = sender_select;
 		send = 1;
 		receive = 0;
-		number = nr;
-		System.out.println("in_msg.data: " + number);
-		bit = b;
-		ack = false;
-		
+		bit = b;		
 		this.a = a;
 		this.d = d;
 		
@@ -68,10 +65,14 @@ public class Sender extends Process implements Runnable {
 					Thread.sleep(100);
 				
 					if(bitReceived == bit){
-						System.out.println("out_ack: " + bit);
+						/**
+						 * Start from here! out_ack and in_msg.data is supposed to be done from S1 and S2.
+						 */
+						/*System.out.println("out_ack: " + bit);
 						bit = (bit+1)%2;
 						number = (number+1)%9;
-						System.out.println("in_msg.data: " + number);
+						System.out.println("in_msg.data: " + number); Now, we are suppose to do this from S1 or S2*/
+						inProgress = false;
 					}
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -99,5 +100,25 @@ public class Sender extends Process implements Runnable {
 	public void setStartState() {
 		a.updateExternal(true);
 		d.updateExternal(false);
+	}
+	
+	public synchronized boolean checkIsReady(){
+		return isReady;
+	}
+	
+	public synchronized void updateIsReady(boolean b){
+		isReady = b;
+	}
+	
+	public synchronized void setNumber(int nr){
+		number = nr;
+		System.out.println("in_msg.data: " + number);
+		inProgress = true;
+		
+	}
+
+
+	public synchronized boolean checkInProgress() {
+		return inProgress;
 	}
 }

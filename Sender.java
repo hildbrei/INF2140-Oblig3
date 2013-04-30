@@ -3,17 +3,20 @@ package channel;
 public class Sender extends Process implements Runnable {
 
 	private Select sender_select;
-	private UnreliableChannel l;
-	private UnreliableChannel k;
-	private int send;
-	private int receive;
-	private int number;
-	private int bit;
-	private int choice;
-	private boolean ack;
+	private UnreliableChannel <String> l;
+	private UnreliableChannel <String> k;
+	private final int send;
+	private final int receive;
+	private int number;//the data to be sent
+	private int bit;//bit to be sent with data (number)
+	private int choice;//the place in ArrayList (Selectable objects)
+	private boolean ack;//if received ack or not
+	private Selectable a;
+	private Selectable d;
+	
+	
 
-
-	public Sender(String string, Select sender_select, int nr, int b, UnreliableChannel l, UnreliableChannel k) {
+	public Sender(String string, Select sender_select, int nr, int b, UnreliableChannel<String> l, UnreliableChannel<String> k, Selectable a, Selectable d) {
 		super(string);
 		this.l = l;
 		this.k = k;
@@ -24,6 +27,10 @@ public class Sender extends Process implements Runnable {
 		System.out.println("in_msg.data: " + number);
 		bit = b;
 		ack = false;
+		
+		this.a = a;
+		this.d = d;
+		
 	}
 
 
@@ -41,10 +48,10 @@ public class Sender extends Process implements Runnable {
 				//we must update the guards for sender_select.list.index(send)
 				try {
 					sendData();
-					Selectable s = sender_select.getList().get(send);
-					s.updateExternal(k.isEmpty());
-					Selectable r = sender_select.getList().get(receive);
-					r.updateExternal(!k.isEmpty());
+					a.updateExternal(true);
+					d.updateExternal(true);
+					
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -56,16 +63,17 @@ public class Sender extends Process implements Runnable {
 				//we must update the guards for sender_select.list.index(receive)
 				try {
 					int bitReceived = receiveBit();
-					Selectable s = sender_select.getList().get(send);
-					s.updateExternal(l.isEmpty());
-					Selectable r = sender_select.getList().get(receive);
-					r.updateExternal(!l.isEmpty());
+					a.updateExternal(true);
+					d.updateExternal(true);
+					Thread.sleep(1000);
+				
 					if(bitReceived == bit){
 						System.out.println("out_ack: " + bit);
 						bit = (bit+1)%2;
 						number = (number+1)%3;
 						System.out.println("in_msg.data: " + number);
 					}
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -74,19 +82,23 @@ public class Sender extends Process implements Runnable {
 	}
 
 	private void sendData() throws InterruptedException{
+		System.out.println("send data "  );
 		k.send(number + "," + bit);
 	}
 	
 	private int receiveBit() throws InterruptedException{
-		String b = (String) l.receive();
+		String b = l.receive();
+		if(b == null){
+			System.out.println("blææ Sender");
+			
+		}
+		
 		return Integer.parseInt(b);
 	}
 
 
 	public void setStartState() {
-		Selectable s = sender_select.getList().get(send);
-		Selectable r = sender_select.getList().get(send);
-		s.updateExternal(true);
-		r.updateExternal(true);
+		a.updateExternal(true);
+		d.updateExternal(false);
 	}
 }

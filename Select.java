@@ -12,10 +12,10 @@ class Select {
 	 * for a new choice by updating their internal and external guards.
 	 */
 	private ArrayList<Selectable> list = new ArrayList<Selectable>(2);
-	
+
 	Process pros;//enten Reciever eller Sender; 
-				//de er subklasser av Process for at vi ikke skal lagre 
-	 			//unødvendige verdier med nullverdi i denne klassen. 
+	//de er subklasser av Process for at vi ikke skal lagre 
+	//unødvendige verdier med nullverdi i denne klassen. 
 
 	public synchronized void add(int i, Selectable s) {
 		list.add(i, s);
@@ -29,10 +29,21 @@ class Select {
 		notifyAll();
 	}
 
+	/**
+	 * Her returnerer vel ready bare true/false av siste forekomst i listen?..
+	 * @return
+	 */
 	private synchronized boolean readyAll(){
-		boolean ready=true;
+		boolean ready = true;
 		for (Selectable s:list){ 
-			ready = (ready && s.testReady()); 
+			ready = (ready && s.testReady());
+
+			/**
+			 * if (ready == false) {
+			 * 		return false...
+			 * }
+			 * 
+			 */
 		}
 		return ready;
 	}
@@ -43,8 +54,10 @@ class Select {
 	private synchronized int testAll() throws InterruptedException  {
 		int i = 0;
 		for (Selectable s:list){
+			System.out.println("testAll " + i + " " + pros.getName());
 			if (s.testGuard()) { 
 				s.clearReady(); 
+				System.out.println("testAll in if " + i + " " + pros.getName());
 				return i; 
 			}
 			i++;
@@ -70,11 +83,11 @@ class Select {
 		}
 		return readyIndex;
 	}
-	
+
 	public void setProcess(Process p){
 		pros = p;
 	}
-	
+
 	public ArrayList<Selectable> getList(){
 		return list;
 	}

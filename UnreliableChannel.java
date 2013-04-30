@@ -58,9 +58,8 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 				while (numberOfRepetitionAndLost < maxError){
 					Random random = new Random();
 					int randomInt = random.nextInt(3);	// randomInt gets the values 0, 1 and 2 which 
-					int safeInt = 0;
 					// correspond to losing, duplicating or properly sending messages		
-					switch (safeInt) {
+					switch (randomInt) {
 					case 0: // Send normally
 						int_send(val);
 						numberOfRepetitionAndLost= maxError; //now, you will not continue in while-loop

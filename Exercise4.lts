@@ -3,7 +3,7 @@ range ERR = 0..MAX
 range M = 0..2
 range BIT = 0..1
 range S = 1..2
-//set Alpha = {a.[i:S].[b:BIT].[e:M], b.[i:S].[b:BIT].[e:M], c.[i:S].[b:BIT], d.[i:S].[b:BIT]}
+
 
 U_CHAN_K = U_CHAN_K[0],
 U_CHAN_K[err:ERR] = (a.[i:S].[b:BIT].[e:M] -> b.[i].[b].[e] -> U_CHAN_K[0]
@@ -42,19 +42,16 @@ CHECK[b:BIT][bb:BIT][e:M][i:S] =
 	| when(bb == b)
 		c.[i].[b] -> RECIEVER[b]).
 
-||ABP = (U_CHAN||SENDER||RECIEVER).//>>{c.[b:BIT]}.
+||ABP = (U_CHAN||SENDER||RECIEVER)>>{c.[b:BIT]}.
 
-Send_1 = Send_1[0][1],
-Send_1[e:M][i:S] = ([i].input.[e] -> [i].in_msg.[e] -> [i].out_ack -> Send_1[(e+1)%2][i]).
+SUB_SEND = SUB_SEND[0],
+SUB_SEND[e:M] = (input[e] -> in_msg.[e] -> out_ack -> SUB_SEND[(e+1)&2]).
+||SUB_SENDERS = ([i:S]:SUB_SEND).
 
-//Send_2 = Send_2[0][2],
-//Send_2[e:M][i:S] = ([i].input.[e] -> [i].in_msg.[e] -> [i].out_ack -> Send_2[(e+1)%2][i]).
+SUB_RECEIVE = (out_msg.[e:M] -> output.[e] -> in_ack[b:BIT] -> SUB_RECEIVE).
+||SUB_RECEIVERS = ([i:S]: SUB_RECEIVE).
 
-Rec_1 = Rec_1[1],
-Rec_1[i:S] = ([i].out_msg.[e:M] -> [i].output.[e] -> [i].in_ack[b:BIT] -> Rec_1[i]).
+||ABP_2 = (ABP || SUB_RECEIVERS || SUB_SENDERS).
 
-//Rec_2 = Rec_2[2],
-//Rec_2[i:S] = ([i].out_msg.[e:M] -> [i].output.[e] -> [i].in_ack[b:BIT] -> Rec_2[i]).
 
-||ABP_2 = ([i:S]::ABP || Send_1 || Rec_1).
 

@@ -4,7 +4,6 @@ import java.util.Random;
 public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 	final static int maxError = 5; // The channel cannot lose or duplicate more than maxError times continuously
 	private T val=null;
-	private int bit;
 	private SyncChannel<T> ch1, ch2;
 	private int numberOfRepetitionAndLost = 0;
 
@@ -58,8 +57,9 @@ public class UnreliableChannel<T> implements Runnable,Channel<T>  {
 				while (numberOfRepetitionAndLost < maxError){
 					Random random = new Random();
 					int randomInt = random.nextInt(3);	// randomInt gets the values 0, 1 and 2 which 
+					int safeInt = 0;
 					// correspond to losing, duplicating or properly sending messages		
-					switch (randomInt) {
+					switch (safeInt) {
 					case 0: // Send normally
 						int_send(val);
 						numberOfRepetitionAndLost= maxError; //now, you will not continue in while-loop

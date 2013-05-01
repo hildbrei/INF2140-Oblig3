@@ -34,9 +34,7 @@ public class INF2140assignment3 {
 		
 		R r1 = new R(receiver, 1);
 		R r2 = new R(receiver, 2);
-		
-		sender.setSubSenders(s1, s2);
-		
+			
 		Thread s_thread = new Thread(sender);
 		Thread k_thread = new Thread(k);
 		Thread r_thread = new Thread(receiver);
@@ -47,10 +45,12 @@ public class INF2140assignment3 {
 		
 		k_thread.start();
 		l_thread.start();
+		Thread.sleep(100);
 		s_thread.start();
+		Thread.sleep(100);
 		r_thread.start();
 		
-		//r1.start();
-		//r2.start();		
+		r1.start();
+		r2.start();		
 	}
 }

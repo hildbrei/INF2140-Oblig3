@@ -22,7 +22,7 @@ public class S extends Thread{
 			mySender.setNumber(number);
 			number = (number+1)%range;
 			mySender.checkInProgress();
-			System.out.println("s" + myID + ".out_ack");
+			System.out.println("S" + myID + ".out_ack");
 			mySender.updateIsReady(true);
 			try {
 				sleep(100);//to make the other subsender able to take over the sending. 

@@ -15,8 +15,6 @@ public class Sender extends Process implements Runnable {
 	private boolean isReady;//is telling if the sender is ready to receive a in_msg.data or not
 	//(it may happen that S is occupied with a number from S1 when S2 wants to send in a number)
 	private boolean inProgress;//is telling if the sender has received in_msg.data and not acked yet. (used in S to wait)
-	private S s1;
-	private S s2;
 	private int id;
 
 
@@ -43,7 +41,6 @@ public class Sender extends Process implements Runnable {
 			}
 			id = getID();
 			if(choice == send && id!= 0){
-				System.out.println("in choice <send> Sender");
 				try {
 					
 					sendData(id);
@@ -55,7 +52,6 @@ public class Sender extends Process implements Runnable {
 				}
 			}
 			else if(choice == receive && id != 0){
-				System.out.println("in choice <recieve> Sender");
 				try {
 					String b = l.receive();
 					if(b == null){
@@ -123,7 +119,7 @@ public class Sender extends Process implements Runnable {
 
 	public synchronized void setNumber(int nr){
 		number = nr;
-		System.out.println("in_msg.data: " + number);
+		System.out.println("S" + id + ".in_msg.data: " + number);
 		inProgress = true;
 
 	}
@@ -137,11 +133,5 @@ public class Sender extends Process implements Runnable {
 				e.printStackTrace();
 			}
 		}
-	}
-
-
-	public void setSubSenders(S s1, S s2) {
-		this.s1 = s1;
-		this.s2 = s2;
 	}
 }

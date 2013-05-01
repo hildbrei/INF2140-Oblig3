@@ -117,4 +117,10 @@ public class Receiver extends Process implements Runnable {
 		c.updateExternal(false);
 		
 	}
+
+
+
+	public void sendInAck(int id) {
+		System.out.println("R"+id+".in_ack");
+	}
 }

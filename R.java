@@ -16,6 +16,7 @@ public class R extends Thread{
 			int nr = myReceiver.checkOutData(this);
 			if(nr != -1){
 				System.out.println("R"+myID + ".output.data:" + nr);
+				myReceiver.sendInAck(myID);
 			}
 			myReceiver.updateOutData(null);
 		}

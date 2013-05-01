@@ -8,6 +8,7 @@ public class Receiver extends Process implements Runnable {
 	private String data;
 	private int bit;
 	private int number;
+	private int sID;
 	UnreliableChannel<String> l;
 	UnreliableChannel<String> k;
 	private Selectable b;
@@ -67,9 +68,11 @@ public class Receiver extends Process implements Runnable {
 			}
 		}
 	}
-	
+	/**
+	 * Sends both bit and the id of the subsender. 
+	 */
 	private void sendBit() throws InterruptedException{
-		l.send("" +bit);
+		l.send(bit + "," + sID);
 	}
 	
 	private void receiveData() throws InterruptedException{
@@ -81,11 +84,13 @@ public class Receiver extends Process implements Runnable {
 		System.out.println(data + " is received at " + getName());
 		int nr = (int)(data.charAt(0)-48);
 		int b = (int)(data.charAt(2) - 48);
+		int id = (int)(data.charAt(4) - 48);
 		
 		if(bit != b){
 			number = nr;
 			System.out.println("out_msg.data: " + number);
 			bit = b;	
+			sID = id;
 		}
 	}
 

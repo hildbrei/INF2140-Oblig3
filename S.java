@@ -1,31 +1,33 @@
 package channel;
 
 public class S extends Thread{
+
+	private Sender mySender;
+	private int number;
+	private int myID;
+	private int range;
 	
-	Sender mySender;
-	int number;
-	public S(Sender sender) {
+	public S(Sender sender, int id) {
 		mySender = sender;
 		number = 0;
+		myID = id;
+		range = 6;
 	}
 
 	public void run(){
-		while(mySender.checkIsReady() == false){
+		while(true){
+			mySender.checkIsReady();//s1 or s2 is waiting for it to be their turn to send data
+			mySender.updateIsReady(false);//now s1 or s2 can send data, and first sets Sender to be occupied
+			mySender.setID(myID);
+			mySender.setNumber(number);
+			number = (number+1)%range;
+			mySender.checkInProgress();
+			System.out.println("s" + myID + ".out_ack");
+			mySender.updateIsReady(true);
 			try {
-				wait();
+				sleep(100);//to make the other subsender able to take over the sending. 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
-			mySender.updateIsReady(false);
-			mySender.setNumber(number);
-			while(mySender.checkInProgress() == true){
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				mySender.updateIsReady(true);
-				notify();//is it supposed to be notifyAll() here?
 			}
 		}
 	}

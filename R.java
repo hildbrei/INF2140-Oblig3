@@ -3,8 +3,10 @@ package channel;
 public class R extends Thread{
 
 	Receiver myReceiver;
-	public R(Receiver receiver) {
+	int myID;
+	public R(Receiver receiver, int id) {
 		myReceiver = receiver;
+		myID = id;
 	}
 
 	public void run(){

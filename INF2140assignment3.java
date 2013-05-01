@@ -29,11 +29,13 @@ public class INF2140assignment3 {
 		sender.setStartState();//first time send should happen, not receive
 		receiver.setStartState();//first time receive should happen, not send
 		
-		S s1 = new S(sender);
-		S s2 = new S(sender);
+		S s1 = new S(sender, 1);
+		S s2 = new S(sender, 2);
 		
-		R r1 = new R(receiver);
-		R r2 = new R(receiver);
+		R r1 = new R(receiver, 1);
+		R r2 = new R(receiver, 2);
+		
+		sender.setSubSenders(s1, s2);
 		
 		Thread s_thread = new Thread(sender);
 		Thread k_thread = new Thread(k);
@@ -48,10 +50,7 @@ public class INF2140assignment3 {
 		s_thread.start();
 		r_thread.start();
 		
-		r1.start();
-		r2.start();
-		
-	
-		
+		//r1.start();
+		//r2.start();		
 	}
 }
